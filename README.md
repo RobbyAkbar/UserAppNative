@@ -34,3 +34,4 @@ Test script ini dibuat untuk mengukur kemampuan kandidat yang sebelumnya sudah m
 
 ## Acknowledgements
 - [Login-UI-Compose](https://github.com/B-L-Studios/Login-UI-Compose)
+- [FirebaseAuthJetCompose](https://github.com/meshramaravind/FirebaseAuthJetCompose)

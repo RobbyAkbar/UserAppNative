@@ -6,17 +6,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,31 +24,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import project.robby.userappnative.R
-import project.robby.userappnative.navigation.Routes
 import project.robby.userappnative.ui.components.CustomFilledButton
 import project.robby.userappnative.ui.components.CustomOutlinedTextField
 import project.robby.userappnative.ui.components.DrawingZone
 import project.robby.userappnative.utils.Resource
-import project.robby.userappnative.utils.validateSignIn
+import project.robby.userappnative.utils.validateResetPassword
 import project.robby.userappnative.viewmodel.AuthViewModel
 
 @Composable
-fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
+fun ForgotScreen(navController: NavController, viewModel: AuthViewModel) {
     val email = rememberSaveable { mutableStateOf("") }
-    val password = rememberSaveable { mutableStateOf("") }
 
-    val loginFlow = viewModel.loginFlow.collectAsStateWithLifecycle()
+    val forgotFlow = viewModel.forgotFlow.collectAsStateWithLifecycle()
 
     Box {
         val context = LocalContext.current
@@ -80,7 +73,7 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
                 }
 
                 Text(
-                    text = context.getString(R.string.welcome_back),
+                    text = context.getString(R.string.reset_password),
                     modifier = Modifier.padding(16.dp),
                     style = TextStyle(
                         color = Color.Black,
@@ -92,43 +85,23 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
                 CustomOutlinedTextField(
                     text = email,
                     placeholder = context.getString(R.string.email),
-                    keyboardType = KeyboardType.Email
-                )
-
-                CustomOutlinedTextField(
-                    text = password, placeholder = context.getString(R.string.password),
-                    keyboardType = KeyboardType.Password, isDone = true
-                )
-
-                ClickableText(
-                    text = AnnotatedString(context.getString(R.string.forgot_password)),
-                    style = TextStyle(
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Right
-                    ),
-                    onClick = {
-                        navController.navigate(Routes.Forgot.route)
-                    },
-                    modifier = Modifier
-                        .padding(16.dp, 0.dp)
-                        .fillMaxWidth()
+                    keyboardType = KeyboardType.Email,
+                    isDone = true
                 )
 
                 CustomFilledButton(onClick = {
-                    validateSignIn(email.value, password.value,
-                        onInvalidate = {
-                            Toast.makeText(
-                                context, context.getString(it), Toast.LENGTH_LONG
-                            ).show()
-                        },
+                    validateResetPassword(email.value, onInvalidate = {
+                        Toast.makeText(
+                            context, context.getString(it), Toast.LENGTH_LONG
+                        ).show()
+                    },
                         onValidate = {
-                            viewModel.login(email.value, password.value)
+                            viewModel.forgot(email.value)
                         })
-                }, text = context.getString(R.string.sign_in))
+                }, text = context.getString(R.string.reset))
             }
         }
-        loginFlow.value?.let {
+        forgotFlow.value?.let {
             when (it) {
                 is Resource.Failure -> {
                     LaunchedEffect(it) {
@@ -142,9 +115,10 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
                 }
                 is Resource.Success -> {
                     LaunchedEffect(Unit) {
-                        navController.navigate(Routes.Home.route) {
-                            popUpTo(0)
-                        }
+                        Toast.makeText(context, it.result, Toast.LENGTH_LONG)
+                            .show()
+                        viewModel.clearData()
+                        navController.popBackStack()
                     }
                 }
             }

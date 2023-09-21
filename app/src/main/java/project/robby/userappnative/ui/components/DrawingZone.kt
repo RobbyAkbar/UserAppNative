@@ -21,7 +21,6 @@ fun DrawingZone() {
             val random = Random()
             val drawnYCoordinates = mutableSetOf<Float>()
 
-
             for (i in 0 until 10) {
                 var startY = random.nextInt(size.height.toInt()).toFloat()
                 var endY = random.nextInt(size.height.toInt()).toFloat()

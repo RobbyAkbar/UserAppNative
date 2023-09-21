@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">User App Native</string>
+
+    <string name="txt_welcome">Test script ini dibuat untuk mengukur kemampuan kandidat yang sebelumnya sudah melaksanakan interview dengan divisi HR PT. FAN Integrasi Teknologi dengan harapan kandidat dapat menyelesaikan test script ini dengan sebaik mungkin.</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="reset">Reset</string>
+    <string name="create_account">Create Account</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="reset_password">Reset your Password!</string>
+
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+
+    <string name="error_name">Nama harus terdiri dari 3 hingga 50 karakter.</string>
+    <string name="error_email">Email tidak valid.</string>
+    <string name="error_password">Password min 8 karakter, mengandung angka, huruf besar dan kecil.</string>
+    <string name="error_password_blank">Harap masukkan password!</string>
+    <string name="error_confirm_password">Konfirmasi password tidak cocok dengan password.</string>
+
+    <string name="dashboard">Dashboard</string>
+    <string name="profile">Profile</string>
+    <string name="favorite">Favorite</string>
 </resources>

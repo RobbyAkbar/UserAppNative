@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -27,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import project.robby.userappnative.R
-import project.robby.userappnative.Routes
+import project.robby.userappnative.navigation.Routes
 import project.robby.userappnative.ui.components.CustomFilledButton
 import project.robby.userappnative.ui.components.CustomOutlinedButton
 import project.robby.userappnative.ui.components.DrawingZone
@@ -35,6 +36,7 @@ import project.robby.userappnative.ui.components.DrawingZone
 @Composable
 fun WelcomeScreen(navController: NavController) {
     Box {
+        val context = LocalContext.current
         DrawingZone()
         Column(
             modifier = Modifier
@@ -56,7 +58,7 @@ fun WelcomeScreen(navController: NavController) {
                 )
 
                 Text(
-                    text = "Test script ini dibuat untuk mengukur kemampuan kandidat yang sebelumnya sudah melaksanakan interview dengan divisi HR PT. FAN Integrasi Teknologi dengan harapan kandidat dapat menyelesaikan test script ini dengan sebaik mungkin.",
+                    text = context.getString(R.string.txt_welcome),
                     modifier = Modifier
                         .padding(16.dp, 0.dp, 16.dp, 16.dp)
                         .fillMaxWidth(),
@@ -68,9 +70,11 @@ fun WelcomeScreen(navController: NavController) {
                     )
                 )
 
-                CustomFilledButton(onClick = { navController.navigate(Routes.SignUp.route) }, text = "Sign Up")
+                CustomFilledButton(onClick = { navController.navigate(Routes.SignUp.route) },
+                    text = context.getString(R.string.sign_up))
 
-                CustomOutlinedButton(onClick = { navController.navigate(Routes.SignIn.route) }, text = "Sign In")
+                CustomOutlinedButton(onClick = { navController.navigate(Routes.SignIn.route) },
+                    text = context.getString(R.string.sign_in))
             }
         }
     }
