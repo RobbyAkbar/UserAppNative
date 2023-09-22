@@ -2,9 +2,9 @@
 Test script ini dibuat untuk mengukur kemampuan kandidat yang sebelumnya sudah melaksanakan interview dengan divisi HR PT. FAN Integrasi Teknologi dengan harapan kandidat dapat menyelesaikan test script ini dengan sebaik mungkin.
 
 ## Requirement:
-[x] Native: Java/Kotlin
-[Hybrid: Flutter](https://github.com/RobbyAkbar/UserAppFlutter) - OnProgress
-[x] Firebase
+- [x] Native: Java/Kotlin
+- [Hybrid: Flutter](https://github.com/RobbyAkbar/UserAppFlutter) - OnProgress
+- [x] Firebase
 
 ## Soal
 - Buatlah aplikasi android native dan hybrid dengan fitur: Register, Login, Lupa Password, Home.
