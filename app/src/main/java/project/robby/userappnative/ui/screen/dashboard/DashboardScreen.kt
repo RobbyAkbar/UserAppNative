@@ -2,9 +2,11 @@ package project.robby.userappnative.ui.screen.dashboard
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,6 +47,7 @@ import project.robby.userappnative.entity.User
 import project.robby.userappnative.ui.components.AsyncImageListItem
 import project.robby.userappnative.ui.components.ErrorLayout
 import project.robby.userappnative.ui.components.LoadingDialog
+import project.robby.userappnative.ui.screen.profile.FilterUI
 import project.robby.userappnative.ui.theme.AttBlue
 import project.robby.userappnative.ui.theme.BackgroundScaffoldColor
 import project.robby.userappnative.ui.theme.TextDarkBlue
@@ -72,6 +75,7 @@ fun DashboardScreen(
         modifier = modifier,
         dashboardUiState = dashboardUiState,
         onSelectUser = viewModel::selectUser,
+        viewModel = viewModel,
         authViewModel = authViewModel,
         onRefresh = viewModel::refresh
     )
@@ -82,6 +86,7 @@ fun DashboardScreen(
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     dashboardUiState: DashboardUiState,
+    viewModel: DashboardViewModel,
     authViewModel: AuthViewModel,
     onSelectUser: (User) -> Unit,
     onRefresh: () -> Unit
@@ -161,16 +166,22 @@ fun DashboardScreen(
                     }
                 }
                 item {
-                    Text(
-                        modifier = Modifier
-                            .padding(
-                                start = 16.dp, end = 16.dp, top = 20.dp, bottom = 14.dp
-                            )
-                            .fillMaxWidth(),
-                        text = stringResource(R.string.user),
-                        color = TextDarkBlue,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp, 0.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.user),
+                            color = TextDarkBlue,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        FilterUI(onClick = {
+                            if (it == 0) {
+                                viewModel.refresh()
+                            } else viewModel.filterUser("emailVerified", it == 1)
+                        })
+                    }
                 }
                 if (dashboardUiState.isError && dashboardUiState is DashboardUiState.ListUiState) {
                     item {

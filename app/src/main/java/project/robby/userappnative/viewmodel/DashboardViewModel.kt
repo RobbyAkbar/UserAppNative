@@ -73,6 +73,14 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+    fun filterUser(key: String, value: Boolean) = viewModelScope.launch {
+        _dashboardViewModelState.update { it.copy(isLoading = true) }
+        userRepository.filterUsers(key, value).collect { usersResource ->
+            _dashboardViewModelState.update { it.copy(listOfUserResource = usersResource,
+                isLoading = false) }
+        }
+    }
+
     private fun getUsers() {
         viewModelScope.launch {
             userRepository.getUsers().collect { usersResource ->

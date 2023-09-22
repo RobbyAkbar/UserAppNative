@@ -48,4 +48,33 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
 
+    override fun filterUsers(key: String, value: Boolean): Flow<DataHandler<List<User>>> =
+        callbackFlow {
+            val usersValueEventListener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val usersSnapshot = snapshot.children.mapNotNull {
+                        it.getValue(UserSnapshot::class.java)
+                    }
+
+                    val users = usersSnapshot.map { it.toUser() }
+
+                    trySend(
+                        DataHandler.Success(users)
+                    )
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    trySend(DataHandler.Error(error.message))
+                }
+            }
+
+            usersReference.orderByChild(key).equalTo(value)
+                .addValueEventListener(usersValueEventListener)
+
+            awaitClose {
+                usersReference.orderByChild(key).equalTo(value)
+                    .removeEventListener(usersValueEventListener)
+            }
+        }
+
 }
