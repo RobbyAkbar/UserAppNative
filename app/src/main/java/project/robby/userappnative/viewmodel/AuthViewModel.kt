@@ -69,4 +69,8 @@ class AuthViewModel @Inject constructor(
         repository.recordUser(user)
     }
 
+    fun updateUser(data: Any, column: String) = viewModelScope.launch {
+        repository.updateUser(data, column)
+    }
+
 }

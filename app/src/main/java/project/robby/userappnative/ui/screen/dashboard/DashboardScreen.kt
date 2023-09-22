@@ -16,9 +16,11 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
+import androidx.compose.material.icons.outlined.SentimentVerySatisfied
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -49,11 +51,13 @@ import project.robby.userappnative.ui.theme.TextDarkBlue
 import project.robby.userappnative.ui.theme.TextGray
 import project.robby.userappnative.ui.theme.WhiteIsh
 import project.robby.userappnative.utils.DataHandler
+import project.robby.userappnative.viewmodel.AuthViewModel
 
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
-    viewModel: DashboardViewModel = hiltViewModel()
+    viewModel: DashboardViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val dashboardUiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -68,7 +72,7 @@ fun DashboardScreen(
         modifier = modifier,
         dashboardUiState = dashboardUiState,
         onSelectUser = viewModel::selectUser,
-        onIconNotificationClick = {},
+        authViewModel = authViewModel,
         onRefresh = viewModel::refresh
     )
 }
@@ -78,23 +82,22 @@ fun DashboardScreen(
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     dashboardUiState: DashboardUiState,
-    onIconNotificationClick: () -> Unit,
+    authViewModel: AuthViewModel,
     onSelectUser: (User) -> Unit,
     onRefresh: () -> Unit
 ) {
     val lazyListState = rememberLazyListState()
     val refreshState = rememberPullRefreshState(
-        refreshing = dashboardUiState.isRefreshing,
-        onRefresh = onRefresh
+        refreshing = dashboardUiState.isRefreshing, onRefresh = onRefresh
     )
+    val currentUser = authViewModel.currentUser
 
     if (dashboardUiState.isLoading) {
         LoadingDialog()
     }
 
     Scaffold(
-        modifier = modifier,
-        backgroundColor = BackgroundScaffoldColor
+        modifier = modifier, backgroundColor = BackgroundScaffoldColor
     ) { paddingValues: PaddingValues ->
         Box(
             modifier = Modifier.pullRefresh(refreshState)
@@ -116,44 +119,52 @@ fun DashboardScreen(
                 item {
                     Box {
                         Image(
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             painter = painterResource(R.drawable.bg_dashboard),
                             contentDescription = null,
                             contentScale = ContentScale.FillWidth
                         )
                         Column {
-                            TopAppBar(
-                                title = {
-                                    androidx.compose.material.Text(
-                                        text = "Dashboard",
-                                        color = WhiteIsh,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                },
-                                actions = {
-                                    IconButton(onClick = onIconNotificationClick) {
-                                        Icon(
-                                            Icons.Filled.Notifications,
-                                            contentDescription = "Notification",
-                                            tint = WhiteIsh
-                                        )
+                            TopAppBar(title = {
+                                Text(
+                                    text = "Dashboard",
+                                    color = WhiteIsh,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }, actions = {
+                                IconButton(onClick = {
+                                    currentUser?.let {
+                                        val beforeUser = currentUser.isEmailVerified
+                                        currentUser.reload().addOnCompleteListener {
+                                            if (it.isSuccessful) {
+                                                if (!beforeUser && currentUser.isEmailVerified) {
+                                                    authViewModel.updateUser(
+                                                        currentUser.isEmailVerified,
+                                                        "emailVerified"
+                                                    )
+                                                }
+                                            }
+                                        }
                                     }
-                                },
-                                backgroundColor = Color.Transparent,
-                                elevation = 0.dp
+                                }) {
+                                    Icon(
+                                        imageVector = if (currentUser !== null && currentUser.isEmailVerified) {
+                                            Icons.Outlined.SentimentVerySatisfied
+                                        } else Icons.Outlined.SentimentVeryDissatisfied,
+                                        contentDescription = "User Status",
+                                        tint = WhiteIsh
+                                    )
+                                }
+                            }, backgroundColor = Color.Transparent, elevation = 0.dp
                             )
                         }
                     }
                 }
                 item {
-                    androidx.compose.material.Text(
+                    Text(
                         modifier = Modifier
                             .padding(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 20.dp,
-                                bottom = 14.dp
+                                start = 16.dp, end = 16.dp, top = 20.dp, bottom = 14.dp
                             )
                             .fillMaxWidth(),
                         text = stringResource(R.string.user),
@@ -189,16 +200,11 @@ fun DashboardScreen(
                                 }
 
                                 is DataHandler.Success -> {
-                                    items(
-                                        dashboardUiState.listOfUserResource.data,
+                                    items(dashboardUiState.listOfUserResource.data,
                                         key = { it.id }) {
-                                        AsyncImageListItem(
-                                            modifier = Modifier
-                                                .padding(
-                                                    start = 16.dp,
-                                                    end = 16.dp,
-                                                    bottom = 10.dp
-                                                ),
+                                        AsyncImageListItem(modifier = Modifier.padding(
+                                            start = 16.dp, end = 16.dp, bottom = 10.dp
+                                        ),
                                             header = it.name,
                                             headerTextColor = if (it == dashboardUiState.selectedUser) {
                                                 WhiteIsh
@@ -211,14 +217,14 @@ fun DashboardScreen(
                                             } else {
                                                 TextGray
                                             },
-                                            imageUrl = "https://nyimpang.com/wp-content/uploads/2023/08/WhatsApp-Image-2023-08-31-at-13.43.04.jpeg",
+                                            isActive = it.emailVerified,
+                                            imageUrl = "https://i.pravatar.cc/300",
                                             backgroundColor = if (it == dashboardUiState.selectedUser) {
                                                 AttBlue
                                             } else {
                                                 WhiteIsh
                                             },
-                                            onClick = { onSelectUser(it) }
-                                        )
+                                            onClick = { onSelectUser(it) })
                                     }
                                 }
                             }

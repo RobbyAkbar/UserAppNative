@@ -21,6 +21,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RunningWithErrors
+import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
+import androidx.compose.material.icons.outlined.SentimentVerySatisfied
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +49,7 @@ fun AsyncImageListItem(
     headerTextColor: Color = TextDarkBlue,
     subHeader: String? = null,
     subHeaderTextColor: Color = TextGray,
+    isActive: Boolean = false,
     loadingContent: @Composable SubcomposeAsyncImageScope.(AsyncImagePainter.State.Loading) -> Unit = {
         CircularProgressIndicator(
             modifier = Modifier.padding(2.dp)
@@ -54,9 +57,7 @@ fun AsyncImageListItem(
     },
     errorContent: @Composable SubcomposeAsyncImageScope.(AsyncImagePainter.State.Error) -> Unit = {
         Icon(
-            Icons.Filled.RunningWithErrors,
-            contentDescription = null,
-            tint = AttBlue
+            Icons.Filled.RunningWithErrors, contentDescription = null, tint = AttBlue
         )
     },
     imageUrl: String,
@@ -71,63 +72,13 @@ fun AsyncImageListItem(
         headerTextColor = headerTextColor,
         subHeader = subHeader,
         subHeaderTextColor = subHeaderTextColor,
+        isActive = isActive,
         imageSlot = {
             SubcomposeAsyncImage(
                 modifier = Modifier
                     .size(50.dp)
                     .background(
-                        color = BgGray,
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                    .clip(RoundedCornerShape(10.dp)),
-                model = imageUrl,
-                contentDescription = "User Image",
-                loading = loadingContent,
-                error = errorContent,
-                contentScale = ContentScale.Crop
-            )
-        },
-        backgroundColor = backgroundColor,
-        border = border
-    )
-}
-
-@Composable
-fun AsyncImageListItem(
-    modifier: Modifier = Modifier,
-    header: String,
-    headerTextColor: Color = TextDarkBlue,
-    subHeader: String? = null,
-    subHeaderTextColor: Color = TextGray,
-    loadingContent: @Composable SubcomposeAsyncImageScope.(AsyncImagePainter.State.Loading) -> Unit = {
-        CircularProgressIndicator(
-            modifier = Modifier.padding(2.dp)
-        )
-    },
-    errorContent: @Composable SubcomposeAsyncImageScope.(AsyncImagePainter.State.Error) -> Unit = {
-        Icon(
-            Icons.Filled.RunningWithErrors,
-            contentDescription = null,
-            tint = AttBlue
-        )
-    },
-    imageUrl: String,
-    backgroundColor: Color = Color.White,
-    border: BorderStroke? = null
-) {
-    ListItem(
-        modifier = modifier,
-        header = header,
-        headerTextColor = headerTextColor,
-        subHeader = subHeader,
-        subHeaderTextColor = subHeaderTextColor,
-        imageSlot = {
-            SubcomposeAsyncImage(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(
-                        color = BgGray,
-                        shape = RoundedCornerShape(10.dp)
+                        color = BgGray, shape = RoundedCornerShape(10.dp)
                     )
                     .clip(RoundedCornerShape(10.dp)),
                 model = imageUrl,
@@ -150,14 +101,14 @@ fun ListItem(
     headerTextColor: Color = TextDarkBlue,
     subHeader: String? = null,
     subHeaderTextColor: Color = TextGray,
+    isActive: Boolean = false,
     imageSlot: @Composable () -> Unit,
     backgroundColor: Color = Color.White,
     onClick: () -> Unit,
     border: BorderStroke? = null
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         onClick = onClick,
         shape = RoundedCornerShape(10.dp),
         backgroundColor = backgroundColor,
@@ -167,18 +118,16 @@ fun ListItem(
             modifier = Modifier
                 .padding(8.dp)
                 .height(IntrinsicSize.Min),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             imageSlot()
             Spacer(modifier = Modifier.width(16.dp))
             Column(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = header,
-                    color = headerTextColor,
-                    fontWeight = FontWeight.SemiBold
+                    text = header, color = headerTextColor, fontWeight = FontWeight.SemiBold
                 )
                 if (subHeader != null) {
                     Text(
@@ -189,65 +138,29 @@ fun ListItem(
                     )
                 }
             }
+            Spacer(Modifier.weight(1f))
+            Icon(
+                imageVector = if (isActive) Icons.Outlined.SentimentVerySatisfied
+                else Icons.Outlined.SentimentVeryDissatisfied,
+                contentDescription = null,
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterVertically)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }
 
-@Composable
-fun ListItem(
-    modifier: Modifier = Modifier,
-    header: String,
-    headerTextColor: Color = TextDarkBlue,
-    subHeader: String? = null,
-    subHeaderTextColor: Color = TextGray,
-    imageSlot: @Composable () -> Unit,
-    backgroundColor: Color = Color.White,
-    border: BorderStroke? = null
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
-        backgroundColor = backgroundColor,
-        border = border
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .height(IntrinsicSize.Min),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            imageSlot()
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Text(
-                    text = header,
-                    color = headerTextColor,
-                    fontWeight = FontWeight.SemiBold
-                )
-                if (!subHeader.isNullOrBlank()) {
-                    Text(
-                        text = subHeader,
-                        fontSize = 12.sp,
-                        color = subHeaderTextColor,
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Preview
 @Composable
 fun UserListItemPreview() {
     UserAppNativeTheme {
-        AsyncImageListItem(
-            header = "Robby Akbar",
+        AsyncImageListItem(header = "Robby Akbar",
             subHeader = "robbyakbar0@gmail.com",
-            imageUrl = "https://nyimpang.com/wp-content/uploads/2023/08/WhatsApp-Image-2023-08-31-at-13.43.04.jpeg"
-        )
+            imageUrl = "https://i.pravatar.cc/300",
+            onClick = { })
     }
 }

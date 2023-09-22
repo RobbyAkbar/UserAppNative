@@ -77,5 +77,26 @@ class AuthRepositoryImpl @Inject constructor(
                 }
         }
     }
+
+    override suspend fun updateUser(data: Any, column: String): Resource<String> {
+        val userRecordReference = firebaseDatabase
+            .getReference("users")
+            .child(firebaseAuth.currentUser?.uid ?: "")
+
+        return suspendCoroutine { continuation ->
+            userRecordReference.child(column).setValue(data)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        continuation.resume(Resource.Success("Updated Successfully"))
+                    } else {
+                        val exception = task.exception ?: Exception("Unknown error")
+                        continuation.resume(Resource.Failure(exception))
+                    }
+                }
+                .addOnFailureListener {
+                    continuation.resume(Resource.Failure(it))
+                }
+        }
+    }
 }
 

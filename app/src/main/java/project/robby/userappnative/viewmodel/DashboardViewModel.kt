@@ -59,7 +59,7 @@ class DashboardViewModel @Inject constructor(
     val messageFlow: SharedFlow<String> = _messageFlow.asSharedFlow()
 
     init {
-        getOffices()
+        getUsers()
     }
 
     fun selectUser(user: User) {
@@ -69,14 +69,14 @@ class DashboardViewModel @Inject constructor(
     fun refresh() {
         viewModelScope.launch {
             _dashboardViewModelState.update { it.copy(isRefreshing = true) }
-            getOffices()
+            getUsers()
         }
     }
 
-    private fun getOffices() {
+    private fun getUsers() {
         viewModelScope.launch {
-            userRepository.getUsers().collect { officesResource ->
-                _dashboardViewModelState.update { it.copy(listOfUserResource = officesResource,
+            userRepository.getUsers().collect { usersResource ->
+                _dashboardViewModelState.update { it.copy(listOfUserResource = usersResource,
                     isRefreshing = false, isLoading = false) }
             }
         }

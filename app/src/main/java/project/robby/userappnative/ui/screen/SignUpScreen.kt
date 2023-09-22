@@ -135,6 +135,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
                                 )
                             )
                         }
+                        it.result.sendEmailVerification()
                         navController.navigate(Routes.Home.route) {
                             popUpTo(0)
                         }
