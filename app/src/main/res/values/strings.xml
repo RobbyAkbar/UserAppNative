@@ -24,4 +24,6 @@
     <string name="dashboard">Dashboard</string>
     <string name="profile">Profile</string>
     <string name="favorite">Favorite</string>
+
+    <string name="user">Users</string>
 </resources>

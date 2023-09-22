@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import project.robby.userappnative.R
+import project.robby.userappnative.entity.User
 import project.robby.userappnative.navigation.Routes
 import project.robby.userappnative.ui.components.CustomFilledButton
 import project.robby.userappnative.ui.components.CustomOutlinedTextField
@@ -124,6 +125,16 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
                 }
                 is Resource.Success -> {
                     LaunchedEffect(it) {
+                        it.result.let { user ->
+                            viewModel.recordNewUser(
+                                User(
+                                    id = user.hashCode(),
+                                    name = user.displayName!!,
+                                    email = user.email!!,
+                                    emailVerified = user.isEmailVerified
+                                )
+                            )
+                        }
                         navController.navigate(Routes.Home.route) {
                             popUpTo(0)
                         }

@@ -7,13 +7,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -35,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import project.robby.userappnative.R
 import project.robby.userappnative.ui.theme.UserAppNativeTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomOutlinedTextField(
     text: MutableState<String>, placeholder: String,
@@ -105,8 +103,7 @@ fun CustomOutlinedTextField(
             .padding(16.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = Color.Black,
+        colors = OutlinedTextFieldDefaults.colors(
             cursorColor = Color.Black,
             focusedBorderColor = Color.Black,
             unfocusedBorderColor = Color.Gray

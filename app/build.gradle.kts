@@ -31,6 +31,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+        all {
+            buildConfigField("String", "FIREBASE_URL", "\"https://user-app-robby-default-rtdb.asia-southeast1.firebasedatabase.app\"")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -76,7 +79,11 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx")
 
     implementation("com.google.dagger:hilt-android:2.48")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     ksp ("com.google.dagger:hilt-android-compiler:2.48")
+
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     testImplementation("junit:junit:4.13.2")
 

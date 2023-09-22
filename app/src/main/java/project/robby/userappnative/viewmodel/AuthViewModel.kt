@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import project.robby.userappnative.entity.User
 import project.robby.userappnative.repository.AuthRepository
 import project.robby.userappnative.utils.Resource
 import javax.inject.Inject
@@ -62,6 +63,10 @@ class AuthViewModel @Inject constructor(
         _loginFlow.value = null
         _signupFlow.value = null
         _forgotFlow.value = null
+    }
+
+    fun recordNewUser(user: User) = viewModelScope.launch {
+        repository.recordUser(user)
     }
 
 }
